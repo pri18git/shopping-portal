@@ -1,6 +1,6 @@
 {
   "name": "mogambo-front-end",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Front end for mogambo  application.",
   "main": "server.js",
   "config": {
@@ -67,3 +67,4 @@
     "should": "13.1.x"
   }
 }
+no 
