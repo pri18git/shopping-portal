@@ -1,7 +1,13 @@
 pipeline {
-  agent any
+  agent none
   stages {
     stage('build') {
+      agent {
+        docker {
+          image 'lagairogo/node:4-alpine'
+        }
+
+      }
       steps {
         echo 'this is the buildjob'
         sh 'npm install'
@@ -9,22 +15,43 @@ pipeline {
     }
 
     stage('test') {
+      agent {
+        docker {
+          image 'lagairogo/node:4-alpine'
+        }
+
+      }
       steps {
         echo 'this is the test job'
-        sh 'npm test'
+        sh '''npm install
+npm test'''
       }
     }
 
     stage('package') {
+      agent {
+        docker {
+          image 'lagairogo/node:4-alpine'
+        }
+
+      }
       steps {
         echo 'this is the package job'
-        sh 'npm run package'
+        sh '''npm install
+npm run package'''
       }
     }
 
-    stage('Archive') {
+    stage('Build and Publish') {
       steps {
-        archiveArtifacts '**/distribution/*.zip'
+        script {
+          docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
+            def dockerImage = docker.build("pri18/shopping-portal:v${env.BUILD_ID}", "./")
+            dockerImage.push()
+            dockerImage.push("latest")
+          }
+        }
+
       }
     }
 
